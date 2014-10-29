@@ -92,26 +92,23 @@ int main(void)
         OC1R = PWM_Period;
         OC1RS = PWM_Period/2;
         RPOR1bits.RP2R = 18;
+        RPOR5bits.RP10R = 18;
 
         OC2CON = 0x000E;
         OC2CONbits.OCTSEL = 1;
         OC2R = PWM_Period;
         OC2RS = PWM_Period/2;
         RPOR4bits.RP8R = 19;
+        RPOR4bits.RP9R = 19;
 
-        // Forward and reverse pins on the PIC
-        // RB9 and RB10
-        TRISBbits.TRISB9 = 0; // output for H bridge
-        TRISBbits.TRISB10 = 0; // output for H bridge
-        LATBbits.LATB9 = 0;  // goes to input 1 and input 4 on H bridge
-        LATBbits.LATB10 = 1; // goes to input 2 and input 3 on H bridge
+        OC3CON = 0x000E;
+        OC3CONbits.OCTSEL = 1;
+        OC3R = PWM_Period;
+        OC3RS = 0;
 
-
-
-        
 	LCDInitialize();
 
-        float num_temp = 0;
+        int num_temp = 0;
         
         printf("Working\n");
 
@@ -142,8 +139,10 @@ int main(void)
                     else if(ADC_value < PWM_Period/2){
                         OC2RS = (ADC_value * 2);
                     }
-                    LATBbits.LATB9 = 0;
-                    LATBbits.LATB10 = 1;
+                    RPOR1bits.RP2R = 18;
+                    RPOR4bits.RP8R = 19;
+                    RPOR5bits.RP10R = 20;
+                    RPOR4bits.RP9R = 20;
                     break;                    
                 case 1:  // IDLE state
                     OC1RS = 0;
@@ -163,8 +162,13 @@ int main(void)
                     else if(ADC_value < PWM_Period/2){
                         OC2RS = (ADC_value * 2);
                     }
-                    LATBbits.LATB9 = 1;
-                    LATBbits.LATB10 = 0;
+                    RPOR5bits.RP10R = 18;
+                    RPOR4bits.RP9R = 19;
+                    RPOR1bits.RP2R = 20;
+                    RPOR4bits.RP8R = 20;
+//                    LATBbits.LATB2 = 0;
+//                    LATBbits.LATB8 = 0;
+                    
                     break;
                 case 3:  // IDLE state
                     OC1RS = 0;
@@ -175,8 +179,8 @@ int main(void)
 
             // TO DO  print the duty cycle of both PWM channels onto the LCD   convert a float to a string...
             LCDMoveCursor(1,0);
-            num_temp = ((ADC_value / PWM_Period) * 100);
-            sprintf(value, "%2f", num_temp);
+            num_temp = (int)((ADC_value / PWM_Period) * 100);
+            sprintf(value, "%2d", num_temp);
             LCDPrintString(value);
 
 
