@@ -179,10 +179,16 @@ int main(void)
 
             // TO DO  print the duty cycle of both PWM channels onto the LCD   convert a float to a string...
             LCDMoveCursor(1,0);
-            num_temp = (int)((ADC_value / PWM_Period) * 100);
-            sprintf(value, "%2d", num_temp);
+            num_temp = (int)(((float)OC1RS / (float)1023) * 100);
+            sprintf(value, "%2d", num_temp);     
             LCDPrintString(value);
-
+            LCDPrintString("%");
+            LCDMoveCursor(1,7);
+            num_temp = (int)(((float)OC2RS / (float)1023) * 100);
+            sprintf(value, "%2d", num_temp);
+            
+            LCDPrintString(value);
+            LCDPrintString("%");
 
 //            AD_value = (ADC_value*3.3)/1024;
 //            sprintf(value, "%6.2f", AD_value); // convert to string
