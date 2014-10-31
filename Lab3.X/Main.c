@@ -23,7 +23,7 @@
 // program the PIC for standalone operation, change the COE_ON option to COE_OFF.
 
 _CONFIG1( JTAGEN_OFF & GCP_OFF & GWRP_OFF &
-		 BKBUG_ON & COE_ON & ICS_PGx1 &
+		 BKBUG_ON & COE_OFF & ICS_PGx1 &
 		 FWDTEN_OFF & WINDIS_OFF & FWPSA_PR128 & WDTPS_PS32768 )
 
 // ******************************************************************************************* //
@@ -63,7 +63,7 @@ int main(void)
         IEC1bits.CNIE = 1;
 
 
-        PR3 = 1474; // 0.1 second delay
+        PR3 = 1032; // 0.1 second delay
 	TMR3 = 0;
         T3CON = 0x8000;
 	IFS0bits.T3IF = 0;
@@ -86,13 +86,14 @@ int main(void)
         AD1CON1bits.ADON = 1; // turn on ADC
 
         /// PWM
-        int PWM_Period = 1024;
+        int PWM_Period = 1023;
         OC1CON = 0x000E;
         OC1CONbits.OCTSEL = 1;
         OC1R = PWM_Period;
         OC1RS = PWM_Period/2;
         RPOR1bits.RP2R = 18;
         RPOR5bits.RP10R = 18;
+//        TRISBbits.TRISB10 = 0;
 
         OC2CON = 0x000E;
         OC2CONbits.OCTSEL = 1;
@@ -100,6 +101,7 @@ int main(void)
         OC2RS = PWM_Period/2;
         RPOR4bits.RP8R = 19;
         RPOR4bits.RP9R = 19;
+//        TRISBbits.TRISB9 = 0;
 
         OC3CON = 0x000E;
         OC3CONbits.OCTSEL = 1;
@@ -180,15 +182,14 @@ int main(void)
             // TO DO  print the duty cycle of both PWM channels onto the LCD   convert a float to a string...
             LCDMoveCursor(1,0);
             num_temp = (int)(((float)OC1RS / (float)1023) * 100);
-            sprintf(value, "%2d", num_temp);     
+            sprintf(value, "%2d%%", num_temp);
             LCDPrintString(value);
-            LCDPrintString("%");
+//            LCDPrintString("%");
             LCDMoveCursor(1,7);
             num_temp = (int)(((float)OC2RS / (float)1023) * 100);
-            sprintf(value, "%2d", num_temp);
-            
+            sprintf(value, "%2d%%", num_temp);
             LCDPrintString(value);
-            LCDPrintString("%");
+//            LCDPrintString("%");
 
 //            AD_value = (ADC_value*3.3)/1024;
 //            sprintf(value, "%6.2f", AD_value); // convert to string
